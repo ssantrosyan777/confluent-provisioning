@@ -79,14 +79,13 @@ graph TD
     J --> N[Service Accounts]
     J --> O[API Keys]
     J --> P[ACLs]
-    J --> R[TableFlow]
+    J --> O[TableFlow]
     
     style A fill:#333,stroke:#fff,stroke-width:2px,color:#fff
     style B fill:#d73027,stroke:#333,stroke-width:2px,color:#fff
     style J fill:#bfb,stroke:#333,stroke-width:2px
     style I fill:#ffb,stroke:#333,stroke-width:2px
     style Q fill:#ffa,stroke:#333,stroke-width:2px
-    style R fill:#aff,stroke:#333,stroke-width:2px
 ```
 
 ### Jenkins Deployment Process
