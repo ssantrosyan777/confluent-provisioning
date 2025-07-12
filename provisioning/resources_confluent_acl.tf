@@ -6,13 +6,13 @@ resource "confluent_kafka_acl" "topic1_acl" {
   host          = "*"
   operation     = "ALL"
   permission    = "ALLOW"
-  rest_endpoint = confluent_kafka_cluster.advisor_cluster.0.rest_endpoint
+  rest_endpoint = confluent_kafka_cluster.cluster.0.rest_endpoint
   credentials {
     key    = confluent_api_key.insights_processor_api_key.0.id
     secret = confluent_api_key.insights_processor_api_key.0.secret
   }
   kafka_cluster {
-    id = confluent_kafka_cluster.advisor_cluster.0.id
+    id = confluent_kafka_cluster.cluster.0.id
   }
   lifecycle {
     prevent_destroy = true
