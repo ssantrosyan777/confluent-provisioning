@@ -73,16 +73,16 @@ graph TD
     H --> I[Terraform Apply]
     I --> J[Confluent Cloud]
     I --> Q[AWS S3]
-    I --> R[TableFlow]
     J --> K[Kafka Clusters]
     J --> L[Topics]
     J --> M[Schema Registry]
     J --> N[Service Accounts]
     J --> O[API Keys]
     J --> P[ACLs]
+    J --> R[TableFlow]
     
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style A fill:#333,stroke:#fff,stroke-width:2px,color:#fff
+    style B fill:#d73027,stroke:#333,stroke-width:2px,color:#fff
     style J fill:#bfb,stroke:#333,stroke-width:2px
     style I fill:#ffb,stroke:#333,stroke-width:2px
     style Q fill:#ffa,stroke:#333,stroke-width:2px
