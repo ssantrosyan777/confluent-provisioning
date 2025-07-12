@@ -1,0 +1,111 @@
+pipeline {
+  agent { label "${params.agent}" }
+
+  environment {
+    AWS_CREDENTIALS_ID       = 'dev_aws_credentials'
+    CONFLUENT_CREDENTIALS_ID = 'confluent-general-access'
+    TERRAFORM_DIR            = 'provisioning'
+    TF_BACKEND_CONFIG        = "environments/${env_type}/${env_type}-backend.conf"
+    TF_VARS_FILE             = "environments/${env_type}/${env_type}.tfvars"
+    BUILD_ID_TAG             = "${env_type}-${GIT_COMMIT}-${BUILD_NUMBER}"
+  }
+
+  stages {
+
+    stage('🧹 Clean Workspace') {
+      steps {
+        ansiColor('xterm') {
+          echo '\n\033[1;34m----------------------------- CLEAN WORKSPACE -----------------------------\033[0m'
+          echo '\033[1;36m[🧼 CLEAN]\033[0m Cleaning workspace...'
+          deleteDir()
+        }
+      }
+    }
+
+    stage('📦 Checkout SCM') {
+      steps {
+        ansiColor('xterm') {
+          echo '\n\033[1;34m----------------------------- CHECKOUT SCM -----------------------------\033[0m'
+          echo '\033[1;36m[📦 SCM]\033[0m Checking out source code...'
+          checkout scm
+        }
+      }
+    }
+
+    stage('🧽 Docker Cleanup') {
+      when {
+        expression { !params.DEPLOY_ONLY }
+      }
+      steps {
+        ansiColor('xterm') {
+          echo '\n\033[1;33m----------------------------- DOCKER CLEANUP -----------------------------\033[0m'
+          echo '\033[1;33m[🧽 DOCKER]\033[0m Running Docker system prune...'
+          withCredentials([
+            aws(credentialsId: env.AWS_CREDENTIALS_ID, accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')
+          ]) {
+            dir(env.TERRAFORM_DIR) {
+              sh 'echo -e "\\033[1;31m🔥 [CLEANUP] Pruning all Docker resources...\\033[0m"'
+              sh 'docker system prune --all -f'
+            }
+          }
+        }
+      }
+    }
+
+    stage('🌍 Terraform Init') {
+      steps {
+        ansiColor('xterm') {
+          echo '\n\033[1;36m----------------------------- TERRAFORM INIT -----------------------------\033[0m'
+          echo '\033[1;36m[🌍 TF INIT]\033[0m Initializing Terraform...'
+          withCredentials([
+            aws(credentialsId: env.AWS_CREDENTIALS_ID, accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')
+          ]) {
+            dir(env.TERRAFORM_DIR) {
+              sh "terraform init -backend-config='${TF_BACKEND_CONFIG}' -upgrade -reconfigure"
+            }
+          }
+        }
+      }
+    }
+
+    stage('🚀 Terraform Build & Push Image') {
+      steps {
+        ansiColor('xterm') {
+          echo '\n\033[1;36m----------------------------- TERRAFORM APPLY -----------------------------\033[0m'
+          echo '\033[1;36m[🚀 TF APPLY]\033[0m Building Infrastructure...'
+          withCredentials([
+            aws(credentialsId: env.AWS_CREDENTIALS_ID, accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'),
+            usernamePassword(credentialsId: env.CONFLUENT_CREDENTIALS_ID, usernameVariable: 'CONFLUENT_ID', passwordVariable: 'CONFLUENT_SECRET')
+          ]) {
+            dir(env.TERRAFORM_DIR) {
+              sh """
+                terraform apply -var-file='${TF_VARS_FILE}' \\
+                -var aws_access_key_id=${AWS_ACCESS_KEY_ID} \\
+                -var aws_secret_access_key=${AWS_SECRET_ACCESS_KEY} \\
+                -var build_id=${BUILD_ID_TAG} \\
+                -var confluent_cloud_api_key=${CONFLUENT_ID} \\
+                -var confluent_cloud_api_secret=${CONFLUENT_SECRET} --auto-approve
+              """
+            }
+          }
+        }
+      }
+    }
+
+  }
+
+  post {
+    success {
+      ansiColor('xterm') {
+        echo '\n\033[1;32m----------------------------- PIPELINE SUCCESS -----------------------------\033[0m'
+        echo '\033[1;32m✅ [SUCCESS] Pipeline completed successfully! \033[0m'
+      }
+    }
+    failure {
+      ansiColor('xterm') {
+        echo '\n\033[1;31m----------------------------- PIPELINE FAILURE -----------------------------\033[0m'
+        echo '\033[1;31m❌ [FAILURE] Pipeline failed. Check logs above for details. \033[0m'
+      }
+    }
+  }
+}
