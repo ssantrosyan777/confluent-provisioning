@@ -59,6 +59,35 @@ provisioning/
 
 This project is designed to work seamlessly with Jenkins for automated deployments. The repository includes Jenkins pipeline configurations for different environments.
 
+```mermaid
+graph TD
+    A[GitHub Repository] --> B[Jenkins Pipeline]
+    B --> C[Environment Selection]
+    C --> D[dev-Jenkinsfile]
+    C --> E[stage-Jenkinsfile]
+    C --> F[prod-Jenkinsfile]
+    D --> G[Terraform Init]
+    E --> G
+    F --> G
+    G --> H[Terraform Plan]
+    H --> I[Terraform Apply]
+    I --> J[Confluent Cloud]
+    J --> K[Kafka Clusters]
+    J --> L[Topics]
+    J --> M[Schema Registry]
+    J --> N[Service Accounts]
+    J --> O[API Keys]
+    J --> P[ACLs]
+    
+    Q[AWS S3] --> I
+    R[TableFlow] --> I
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style J fill:#bfb,stroke:#333,stroke-width:2px
+    style I fill:#ffb,stroke:#333,stroke-width:2px
+```
+
 ### Jenkins Deployment Process
 
 The deployment can be triggered in Jenkins by providing the GitHub repository path. Jenkins will automatically:
