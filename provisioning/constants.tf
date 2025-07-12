@@ -18,6 +18,9 @@ locals {
   confluent_schema_registry_api_key_name  = "${var.env}-schema-registry-api-key"
   confluent_general_secret_name           = "${var.env}-confluent-common-secrets"
 
+  topic1_confluent_sa_name              = "${var.env}-topic1-service-account"
+  topic1_confluent_cluster_api_key_name = "${var.env}-topic1-api-key"
+ 
   env_naming_dict = {
     dev   = "Development"
     stage = "Staging"
