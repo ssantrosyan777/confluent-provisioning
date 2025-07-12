@@ -72,6 +72,8 @@ graph TD
     G --> H[Terraform Plan]
     H --> I[Terraform Apply]
     I --> J[Confluent Cloud]
+    I --> Q[AWS S3]
+    I --> R[TableFlow]
     J --> K[Kafka Clusters]
     J --> L[Topics]
     J --> M[Schema Registry]
@@ -79,13 +81,12 @@ graph TD
     J --> O[API Keys]
     J --> P[ACLs]
     
-    Q[AWS S3] --> I
-    R[TableFlow] --> I
-    
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#bbf,stroke:#333,stroke-width:2px
     style J fill:#bfb,stroke:#333,stroke-width:2px
     style I fill:#ffb,stroke:#333,stroke-width:2px
+    style Q fill:#ffa,stroke:#333,stroke-width:2px
+    style R fill:#aff,stroke:#333,stroke-width:2px
 ```
 
 ### Jenkins Deployment Process
