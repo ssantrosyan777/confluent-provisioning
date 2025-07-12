@@ -8,8 +8,8 @@ resource "confluent_kafka_acl" "topic1_acl" {
   permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.0.rest_endpoint
   credentials {
-    key    = confluent_api_key.insights_processor_api_key.0.id
-    secret = confluent_api_key.insights_processor_api_key.0.secret
+    key    = confluent_api_key.topic1_api_key.0.id
+    secret = confluent_api_key.topic1_api_key.0.secret
   }
   kafka_cluster {
     id = confluent_kafka_cluster.cluster.0.id
