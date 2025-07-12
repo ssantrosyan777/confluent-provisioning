@@ -55,6 +55,46 @@ provisioning/
    terraform apply
    ```
 
+## Jenkins Integration
+
+This project is designed to work seamlessly with Jenkins for automated deployments. The repository includes Jenkins pipeline configurations for different environments.
+
+### Jenkins Deployment Process
+
+The deployment can be triggered in Jenkins by providing the GitHub repository path. Jenkins will automatically:
+1. Clone the repository
+2. Execute the environment-specific Jenkinsfile
+3. Run Terraform commands to deploy the infrastructure
+4. Handle environment-specific configurations
+
+### Environment-Specific Jenkinsfiles
+
+Each environment has its own Jenkinsfile with tailored deployment processes:
+
+- **Development**: `environments/dev/dev-Jenkinsfile`
+- **Staging**: `environments/stage/stage-Jenkinsfile`
+- **Production**: `environments/prod/prod-Jenkinsfile`
+
+### Setting up Jenkins Jobs
+
+1. Create a new Jenkins pipeline job
+2. Configure the job to use "Pipeline script from SCM"
+3. Set the repository URL to this GitHub repository
+4. Specify the appropriate Jenkinsfile path based on your target environment:
+   - For dev: `provisioning/environments/dev/dev-Jenkinsfile`
+   - For stage: `provisioning/environments/stage/stage-Jenkinsfile`
+   - For prod: `provisioning/environments/prod/prod-Jenkinsfile`
+
+### Jenkins Prerequisites
+
+Ensure your Jenkins instance has:
+- Terraform plugin installed
+- Required credentials configured:
+  - `CONFLUENT_CLOUD_API_KEY`
+  - `CONFLUENT_CLOUD_API_SECRET`
+  - AWS credentials (if using S3 integration)
+- Git access to this repository
+
 ## Resource Management
 
 ### Kafka Topics
