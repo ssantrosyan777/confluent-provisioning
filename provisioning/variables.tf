@@ -6,6 +6,11 @@ variable "region" {
   type = string
 }
 
+variable "build_id" {
+  type    = string
+  default = "build"
+}
+
 variable "aws_access_key_id" {
   type    = string
   default = ""
